@@ -31,14 +31,15 @@ client.on("messageCreate", async (message) => {
     return;
   }
 
-  const itemPrice = parseFloat(itemPriceStr);
+  const cleanedPriceStr = itemPriceStr.replace(/[$,]/g, "");
+  const itemPrice = parseFloat(cleanedPriceStr);
 
   if (isNaN(itemPrice)) {
     message.reply("Invalid item price. Please provide a valid number.");
     return;
   }
 
-  if (isNaN(itemPrice) || itemPrice <= 0) {
+  if (itemPrice <= 0) {
     message.reply("Item price must be a positive number.");
     return;
   }
@@ -54,8 +55,11 @@ client.on("messageCreate", async (message) => {
   const totalFees = marketplaceCommission + processingFee;
   const sellerPayout = itemPrice - totalFees;
 
+  // Using italics for the footer, which works correctly for bots.
   const replyMessage = `**Total Fees:** $${totalFees.toFixed(2)}
-**Payout:** $${sellerPayout.toFixed(2)}`;
+**Payout:** $${sellerPayout.toFixed(2)}
+\n_-# Calculated for 1 item_`;
+
   message.reply(replyMessage);
 });
 
