@@ -58,7 +58,7 @@ client.on("messageCreate", async (message) => {
   // Using italics for the footer, which works correctly for bots.
   const replyMessage = `**Total Fees:** $${totalFees.toFixed(2)}
 **Payout:** $${sellerPayout.toFixed(2)}
-\n_-# Calculated for 1 item_`;
+-# *Assumes 1 item*`;
 
   message.reply(replyMessage);
 });
