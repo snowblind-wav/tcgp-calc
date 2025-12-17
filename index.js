@@ -1,13 +1,12 @@
 require("dotenv").config();
 
-const { Client, GatewayIntentBits } = require("discord.js");
+const {
+  Client,
+  GatewayIntentBits
+} = require("discord.js");
 
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-  ],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, ],
 });
 
 const BOT_PREFIX = "!tcgp";
@@ -16,34 +15,28 @@ const MARKETPLACE_COMMISSION_RATE = 0.1025;
 const PROCESSING_FEE_RATE = 0.025;
 const PROCESSING_FEE_FIXED = 0.3;
 
-client.on("ready", () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+client.on("ready", () = >{
+  console.log(`$ {
+    client.user.tag
+  } is ready! `);
 });
 
-client.on("messageCreate", async (message) => {
+client.on("messageCreate", (message) = >{
   if (message.author.bot || !message.content.startsWith(BOT_PREFIX)) return;
 
-  const args = message.content.slice(BOT_PREFIX.length).trim().split(/ +/);
-  const itemPriceStr = args.shift();
+  const itemPriceStr = message.content.slice(BOT_PREFIX.length).trim().split(/\s+/)[0];
 
   if (!itemPriceStr) {
     message.reply("Please provide an item price. Usage: `!tcgp <price>`");
     return;
   }
 
-  const cleanedPriceStr = itemPriceStr.replace(/[$,]/g, "");
-  const itemPrice = parseFloat(cleanedPriceStr);
+  const itemPrice = parseFloat(itemPriceStr ? .replace(/[$,]/g, "") || "");
 
-  if (isNaN(itemPrice)) {
-    message.reply("Invalid item price. Please provide a valid number.");
+  if (!itemPrice || itemPrice <= 0) {
+    message.reply("Invalid price. Please provide a valid positive number.");
     return;
   }
-
-  if (itemPrice <= 0) {
-    message.reply("Item price must be a positive number.");
-    return;
-  }
-
   const salesTax = itemPrice * SALES_TAX_RATE;
   const orderTotal = itemPrice + salesTax;
 
@@ -55,10 +48,11 @@ client.on("messageCreate", async (message) => {
   const totalFees = marketplaceCommission + processingFee;
   const sellerPayout = itemPrice - totalFees;
 
-  // Using italics for the footer, which works correctly for bots.
-  const replyMessage = `**Total Fees:** $${totalFees.toFixed(2)}
-**Payout:** $${sellerPayout.toFixed(2)}
--# *Assumes 1 item*`;
+  const replyMessage = ` * *Total Fees: **$$ {
+    totalFees.toFixed(2)
+  } * *Payout: **$$ {
+    sellerPayout.toFixed(2)
+  } - # * Assumes 1 item * `;
 
   message.reply(replyMessage);
 });
